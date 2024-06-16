@@ -36,11 +36,12 @@
         return bodyText.trim();
     }
 
-    const selectedText = getVisibleText();
+    const selectedText = window.getSelection().toString().trim();
+    const textToSummarize = selectedText || getVisibleText();
 
-    if (selectedText) {
-        chrome.storage.local.set({ selectedText }, () => {
-            console.log('Visible text from page saved:', selectedText);
+    if (textToSummarize) {
+        chrome.storage.local.set({ selectedText: textToSummarize }, () => {
+            console.log('Text to summarize saved:', textToSummarize);
             chrome.runtime.sendMessage({
                 action: 'openGPT'
             });

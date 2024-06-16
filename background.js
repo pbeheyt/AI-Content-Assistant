@@ -12,6 +12,12 @@ chrome.runtime.onInstalled.addListener(() => {
         contexts: ["page"]
     });
 
+    chrome.contextMenus.create({
+        id: "summarizeSelectedText",
+        title: "Summarize selected text",
+        contexts: ["selection"]
+    });
+
     chrome.commands.onCommand.addListener((command) => {
         if (command === "summarize-selected-text") {
             chrome.storage.local.set({ launchedViaContextMenu: false }, () => {
@@ -55,7 +61,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                 });
             });
         });
-    } else if (info.menuItemId === "summarizeArticle") {
+    } else if (info.menuItemId === "summarizeArticle" || info.menuItemId === "summarizeSelectedText") {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             chrome.scripting.executeScript({
                 target: { tabId: tabs[0].id },
