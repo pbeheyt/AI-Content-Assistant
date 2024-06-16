@@ -27,6 +27,12 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             const url = info.linkUrl;
             chrome.tabs.create({ url, active: false }, (newTab) => {
                 console.log(`Created new tab with ID: ${newTab.id} for URL: ${url}`);
+
+                // Store the new tab ID immediately
+                chrome.storage.local.set({ articleTabId: newTab.id }, () => {
+                    console.log(`Stored articleTabId: ${newTab.id} in local storage`);
+                });
+
                 chrome.scripting.executeScript({
                     target: { tabId: newTab.id },
                     files: ['article-content.js']
@@ -38,16 +44,14 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                     if (tabId === newTab.id && changeInfo.status === 'complete') {
                         console.log(`Tab with ID: ${newTab.id} has completed loading`);
                         chrome.tabs.onUpdated.removeListener(articleTabListener);
-                        // Store the new tab ID to be closed later
-                        chrome.storage.local.set({ articleTabId: newTab.id }, () => {
-                            console.log(`Stored articleTabId: ${newTab.id} in local storage`);
-                        });
+                        // Optionally update or handle further actions here
                     }
                 });
             });
         });
     }
 });
+
 
 
 
@@ -94,7 +98,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 chrome.storage.local.get(['launchedViaContextMenu', 'articleTabId'], (result) => {
                     const { launchedViaContextMenu, articleTabId } = result;
 
-                    if (launchedViaContextMenu && sender.tab.id !== articleTabId) {
+                    if (launchedViaContextMenu && sender.tab.id === articleTabId) {
                         console.log(`Checking if article tab with ID: ${articleTabId} exists`);
                         // Check if the article tab exists before switching to it
                         chrome.tabs.get(articleTabId, (tab) => {
