@@ -37,11 +37,11 @@
     }
 
     const selectedText = window.getSelection().toString().trim();
-    const textToSummarize = selectedText || getVisibleText();
+    const textToProcesss = selectedText || getVisibleText();
 
-    if (textToSummarize) {
-        chrome.storage.local.set({ selectedText: textToSummarize }, () => {
-            console.log('Text to summarize saved:', textToSummarize);
+    if (textToProcesss) {
+        chrome.storage.local.set({ selectedText: textToProcesss }, () => {
+            console.log('Text to summarize saved:', textToProcesss);
             chrome.runtime.sendMessage({
                 action: 'openGPT'
             });
