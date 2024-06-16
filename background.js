@@ -6,6 +6,12 @@ chrome.runtime.onInstalled.addListener(() => {
         contexts: ["link"]
     });
 
+    chrome.contextMenus.create({
+        id: "summarizeCurrentPage",
+        title: "Summarize current page",
+        contexts: ["page"]
+    });
+
     chrome.commands.onCommand.addListener((command) => {
         if (command === "summarize-selected-text") {
             chrome.storage.local.set({ launchedViaContextMenu: false }, () => {
@@ -22,7 +28,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === "openLinkAndPerformScript") {
-        console.log(`Context menu item clicked in tab with ID: ${tab.id} and URL: ${tab.url}`);
+        console.log(`Context menu item clicked in tab with ID: ${tab.id} and URL: ${info.linkUrl}`);
         chrome.storage.local.set({ launchedViaContextMenu: true }, () => {
             const url = info.linkUrl;
             chrome.tabs.create({ url, active: false }, (newTab) => {
@@ -49,11 +55,15 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                 });
             });
         });
+    } else if (info.menuItemId === "summarizeCurrentPage") {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.scripting.executeScript({
+                target: { tabId: tabs[0].id },
+                files: ['article-content.js']
+            });
+        });
     }
 });
-
-
-
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url) {
@@ -157,6 +167,3 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
     sendResponse();
 });
-
-
-
