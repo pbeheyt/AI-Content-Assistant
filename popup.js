@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             chrome.scripting.executeScript({
                 target: { tabId: tabs[0].id },
-                files: ['article-content.js']
+                files: ['content.js']
             });
         });
     });

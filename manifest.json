@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "Article Summary",
-    "description": "Summarize selected text and send to ChatGPT",
+    "name": "GPT Content Assistant",
+    "description": "Summarize and explore content with ChatGPT agents",
     "version": "1.0",
     "permissions": [
         "contextMenus",
@@ -24,14 +24,6 @@
         "16": "images/icon16.png",
         "48": "images/icon48.png",
         "128": "images/icon128.png"
-    },
-    "commands": {
-        "summarize-selected-text": {
-            "suggested_key": {
-                "default": "Ctrl+Shift+A"
-            },
-            "description": "Summarize selected text"
-        }
     },
     "web_accessible_resources": [
         {
