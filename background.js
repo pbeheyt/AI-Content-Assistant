@@ -1,14 +1,14 @@
 chrome.runtime.onInstalled.addListener(() => {
     console.log("Extension installed.");
     chrome.contextMenus.create({
-        id: "openLinkAndPerformScript",
+        id: "summarizeLinkedArticle",
         title: "Summarize linked article",
         contexts: ["link"]
     });
 
     chrome.contextMenus.create({
-        id: "summarizeCurrentPage",
-        title: "Summarize current page",
+        id: "summarizeArticle",
+        title: "Summarize article",
         contexts: ["page"]
     });
 
@@ -27,7 +27,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId === "openLinkAndPerformScript") {
+    if (info.menuItemId === "summarizeLinkedArticle") {
         console.log(`Context menu item clicked in tab with ID: ${tab.id} and URL: ${info.linkUrl}`);
         chrome.storage.local.set({ launchedViaContextMenu: true }, () => {
             const url = info.linkUrl;
@@ -55,7 +55,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                 });
             });
         });
-    } else if (info.menuItemId === "summarizeCurrentPage") {
+    } else if (info.menuItemId === "summarizeArticle") {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             chrome.scripting.executeScript({
                 target: { tabId: tabs[0].id },
