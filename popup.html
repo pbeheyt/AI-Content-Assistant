@@ -5,52 +5,54 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GPT Content Assistant</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
     body {
-      font-family: 'Noto Sans', sans-serif;
-      background-color: #1a1a1b;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #1a1a1b, #2a2a2b);
       margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-    }
-
-    .container {
-      background-color: #444444;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 20px;
-      margin-bottom: 10px;
       color: #ffffff;
     }
 
+    .container {
+      background-color: #3c3c3c;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 130px;
+    }
+
     button {
-      background-color: #ffffff;
-      color: #444444;
-      padding: 10px 20px;
-      font-size: 16px;
+      background: linear-gradient(135deg, #757575, #616161);
+      color: #ffffff;
+      padding: 12px 10px;
+      font-size: 14px;
+      font-weight: bold;
+      border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.3s;
-      font-weight: bold;
-      white-space: nowrap;
+      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      white-space: normal;
     }
 
     button:hover {
-      background-color: #ffffff;
+      background: linear-gradient(135deg, #9e9e9e, #757575);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>GPT Content Assistant</h1>
-    <button type="button" id="summarizeBtn">Summarize</button>
+    <button type="button" id="summarizeBtn">Summarize<br>Page</button>
   </div>
   <script src="popup.js"></script>
 </body>
