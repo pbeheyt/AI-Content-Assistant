@@ -1,4 +1,4 @@
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(async () => {
     chrome.contextMenus.create({
         id: "summarizeLinkedPage",
         title: "Summarize page",
@@ -22,7 +22,12 @@ chrome.runtime.onInstalled.addListener(() => {
         title: "Explore",
         contexts: ["selection"]
     });
+
+    const response = await fetch(chrome.runtime.getURL('config.json'));
+    const config = await response.json();
+    await chrome.storage.local.set({ gptConfig: config });
 });
+
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     let configKey = "";
@@ -64,12 +69,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 });
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete' && tab.url) {
-        const response = await fetch(chrome.runtime.getURL('config.json'));
-        const config = await response.json();
+    if (changeInfo.status === 'complete' && tab.url && tab.url.includes('chatgpt.com')) {
+        const { gptConfig } = await chrome.storage.local.get('gptConfig');
         const gptUrls = [
-            config.chatgptSummaryUrl,
-            config.chatgptExplorerUrl
+            gptConfig.chatgptSummaryUrl,
+            gptConfig.chatgptExplorerUrl
         ];
 
         if (gptUrls.some(url => tab.url.includes(url))) {
