@@ -49,36 +49,51 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         if (info.menuItemId === "summarizeLinkedPage") {
             await chrome.storage.local.set({ launchedViaContextMenu: true });
             const url = info.linkUrl;
-            try {
-                const newTab = await chrome.tabs.create({ url, active: false });
-                await chrome.storage.local.set({ contentTabId: newTab.id });
+            // console.log('Opening URL in new tab:', url);
+            const newTab = await chrome.tabs.create({ url, active: false });
+            await chrome.storage.local.set({ contentTabId: newTab.id });
+
+            // Listen for URL changes
+            const tabListener = async (tabId, changeInfo, tab) => {
+                if (tabId === newTab.id && changeInfo.status === 'complete') {
+                    // console.log('Page loaded:', tab.url);
+
+                    // Check if the URL has changed due to redirection
+                    if (tab.url !== url) {
+                        // console.log('Final URL after redirection:', tab.url);
+                        chrome.tabs.onUpdated.removeListener(tabListener);
+                        await chrome.scripting.executeScript({
+                            target: { tabId: newTab.id },
+                            files: ['content.js']
+                        }).catch(err => console.error('Error executing script:', err));
+                    }
+                }
+            };
+
+            chrome.tabs.onUpdated.addListener(tabListener);
+
+            // Set a timeout to handle no redirection case
+            setTimeout(async () => {
+                const updatedTab = await chrome.tabs.get(newTab.id);
+                if (updatedTab.status === 'complete') {
+                    // console.log('No redirection detected, executing script on URL:', updatedTab.url);
+                    chrome.scripting.executeScript({
+                        target: { tabId: newTab.id },
+                        files: ['content.js']
+                    }).catch(err => console.error('Error executing script:', err));
+                }
+            }, 2000);
+        } else if (["summarizePage", "summarizeSelectedText", "exploreSelectedText"].includes(info.menuItemId)) {
+            const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+            if (tabs.length > 0) {
+                // console.log('Executing script on active tab URL:', tabs[0].url);
                 await chrome.scripting.executeScript({
-                    target: { tabId: newTab.id },
+                    target: { tabId: tabs[0].id },
                     files: ['content.js']
                 });
-
-                chrome.tabs.onUpdated.addListener(function contentTabListener(tabId, changeInfo) {
-                    if (tabId === newTab.id && changeInfo.status === 'complete') {
-                        chrome.tabs.onUpdated.removeListener(contentTabListener);
-                    }
-                });
-            } catch (error) {
-                console.error('Error creating or interacting with tab:', error);
-            }
-        } else if (["summarizePage", "summarizeSelectedText", "exploreSelectedText"].includes(info.menuItemId)) {
-            try {
-                const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-                if (tabs.length > 0) {
-                    await chrome.scripting.executeScript({
-                        target: { tabId: tabs[0].id },
-                        files: ['content.js']
-                    });
-                    chrome.runtime.sendMessage({ action: 'openGPT' });
-                } else {
-                    console.error('No active tab found.');
-                }
-            } catch (error) {
-                console.error('Error executing script:', error);
+                chrome.runtime.sendMessage({ action: 'openGPT' });
+            } else {
+                console.error('No active tab found.');
             }
         }
     } catch (error) {
@@ -86,8 +101,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     }
 });
 
+
+
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete' && tab.url && tab.url.includes('chatgpt.com')) {
+        console.log('Tab updated with URL:', tab.url); // Log the URL
         try {
             const { gptConfig } = await chrome.storage.local.get('gptConfig');
             const gptUrls = [
@@ -120,6 +138,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             if (launchedViaContextMenu && sender.tab.id === contentTabId) {
                 const tab = await safeGetTab(contentTabId);
                 if (!tab) {
+                    console.log('Creating new GPT tab with URL:', gptUrl); // Log the URL
                     const gptTab = await chrome.tabs.create({ url: gptUrl, active: false });
                     await chrome.storage.local.set({ gptTabId: gptTab.id, scriptInjected: false });
                     await chrome.tabs.update(gptTab.id, { active: true });
@@ -128,12 +147,14 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                     await chrome.tabs.remove(contentTabId);
                     const updatedTab = await safeGetTab(contentTabId);
                     if (!updatedTab) {
+                        console.log('Recreating new GPT tab with URL:', gptUrl); // Log the URL
                         const gptTab = await chrome.tabs.create({ url: gptUrl, active: false });
                         await chrome.storage.local.set({ gptTabId: gptTab.id, scriptInjected: false });
                         await chrome.tabs.update(gptTab.id, { active: true });
                     }
                 }
             } else {
+                console.log('Creating GPT tab with URL:', gptUrl); // Log the URL
                 const gptTab = await chrome.tabs.create({ url: gptUrl, active: false });
                 await chrome.storage.local.set({ gptTabId: gptTab.id, scriptInjected: false });
                 await chrome.tabs.update(gptTab.id, { active: true });
