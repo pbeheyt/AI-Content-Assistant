@@ -33,10 +33,10 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-    let configKey = "";
-    if (info.menuItemId === "summarizeSelectedText") {
-        configKey = "chatgptSummaryUrl";
-    } else if (info.menuItemId === "exploreSelectedText") {
+	let configKey = "";
+	if (["summarizeLinkedPage", "summarizeSelectedText", "summarizePage"].includes(info.menuItemId)) {
+		configKey = "chatgptSummaryUrl";
+	} else if (info.menuItemId === "exploreSelectedText") {
         configKey = "chatgptExplorerUrl";
     }
 
