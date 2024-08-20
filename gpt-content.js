@@ -19,39 +19,9 @@
         }
     };
 
-    const waitForTopElementAndScroll = async () => {
-        try {
-            while (true) {
-                let elements = document.querySelectorAll('[data-testid^="conversation-turn"]');
-                if (elements.length > 0) {
-                    let lastElement = elements[elements.length - 1];
-                    lastElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    break; // Exit loop after scrolling
-                }
-                await new Promise(resolve => setTimeout(resolve, 500)); // Wait for 500ms before checking again
-            }
-        } catch (error) {
-            console.error("Error scrolling to top of last element:", error);
-        }
-    };
-
     const handleProcess = async (selectedText) => {
         insertData(selectedText);
         sendPrompt();
-
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.addedNodes.length) {
-                    waitForTopElementAndScroll();
-                }
-            });
-        });
-
-        observer.observe(document.body, { childList: true, subtree: true });
-
-        setTimeout(() => {
-            observer.disconnect();
-        }, 5000);
     };
 
     const init = async () => {
