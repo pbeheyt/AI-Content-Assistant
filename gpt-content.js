@@ -13,7 +13,10 @@
     const sendPrompt = () => {
         const sendButton = document.querySelector('[data-testid="send-button"]');
         if (sendButton) {
-            sendButton.click();
+            // Slight delay to ensure the input has been fully processed
+            setTimeout(() => {
+                sendButton.click();
+            }, 100); // Adjust delay as necessary
         } else {
             console.error('Send button not found');
         }
