@@ -2,8 +2,13 @@
     const insertData = (data) => {
         const promptField = document.querySelector('#prompt-textarea');
         if (promptField) {
-            promptField.value = data;
-            const inputEvent = new Event('input', { bubbles: true });
+            promptField.focus();  // Ensure focus on the textarea
+
+            // Use execCommand to simulate user input
+            document.execCommand('insertText', false, data);
+
+            // Trigger the input event to notify the app of the change
+            const inputEvent = new InputEvent('input', { bubbles: true });
             promptField.dispatchEvent(inputEvent);
         } else {
             console.error('Prompt textarea not found');
@@ -11,20 +16,32 @@
     };
 
     const sendPrompt = () => {
-        const sendButton = document.querySelector('[data-testid="send-button"]');
-        if (sendButton) {
-            // Slight delay to ensure the input has been fully processed
-            setTimeout(() => {
-                sendButton.click();
-            }, 500);
-        } else {
-            console.error('Send button not found');
-        }
+        // Use MutationObserver to wait for the send button to appear
+        const observer = new MutationObserver(() => {
+            const sendButton = document.querySelector('[data-testid="send-button"]');
+            if (sendButton && !sendButton.disabled && sendButton.offsetParent !== null) {
+                console.log('Send button found, dispatching a simulated click event...');
+
+                // Simulate a mouse click event
+                const event = new MouseEvent('click', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true
+                });
+                sendButton.dispatchEvent(event);
+                observer.disconnect();  // Stop observing after the button is found and clicked
+            } else if (!sendButton) {
+                console.error('Send button not found');
+            }
+        });
+
+        // Observe changes in the body for when the send button gets added to the DOM
+        observer.observe(document.body, { childList: true, subtree: true });
     };
 
     const handleProcess = async (selectedText) => {
         insertData(selectedText);
-        sendPrompt();
+        sendPrompt();  // Call sendPrompt to handle clicking the button
     };
 
     const init = async () => {
@@ -33,7 +50,7 @@
             const observer = new MutationObserver((mutations, observer) => {
                 if (document.querySelector('#prompt-textarea')) {
                     handleProcess(result.selectedText);
-                    observer.disconnect();
+                    observer.disconnect();  // Stop observing after the textarea is found
                 }
             });
 
