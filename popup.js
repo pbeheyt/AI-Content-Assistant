@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Load config first
         const config = await fetch(chrome.runtime.getURL('config.json')).then(r => r.json());
         
-        // Load saved preference
-        const { useClaudeAI = false } = await chrome.storage.local.get('useClaudeAI');
-        document.getElementById('aiToggle').checked = useClaudeAI;
+        // Load saved preference with Claude as default
+        const { useClaudeAI } = await chrome.storage.local.get('useClaudeAI');
+        document.getElementById('aiToggle').checked = useClaudeAI !== undefined ? useClaudeAI : true;
         console.log('Loaded AI preference:', useClaudeAI);
 
         // Save preference when changed

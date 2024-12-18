@@ -34,3 +34,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         }
     }
 });
+
+chrome.runtime.onInstalled.addListener(async () => {
+    const { useClaudeAI } = await chrome.storage.local.get(['useClaudeAI']);
+    if (useClaudeAI === undefined) {
+        await chrome.storage.local.set({ useClaudeAI: true });
+    }
+});
