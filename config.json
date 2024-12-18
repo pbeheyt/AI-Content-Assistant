@@ -1,4 +1,7 @@
 {
-    "chatgptSummaryUrl": "https://chatgpt.com/g/g-TvsMwDGpd-content-summary",
-    "chatgptExplorerUrl": "https://chatgpt.com/g/g-dWln4lkxe-content-explorer"
+  "chatgptUrl": "https://chatgpt.com/",
+  "claudeUrl": "https://claude.ai/new",
+  "prePromptSummary": "📝 Analyse et résume ce contenu de façon claire et structurée: 1️⃣ Points Clés 🎯 (idées principales, conclusions importantes, données significatives), 2️⃣ Structure 📊 (contexte, sections principales, recommandations), 3️⃣ Détails Notables ✨ (citations intéressantes, preuves, perspectives uniques), 4️⃣ Éléments Visuels 📈 (statistiques clés, chiffres importants), 5️⃣ Synthèse 💡 (messages essentiels, implications, questions de suivi) - Analyse ce contenu:",
+
+  "prePromptExplorer": "🔍 Explore et analyse en profondeur ce contenu: 1️⃣ Analyse Profonde 🧠 (concepts centraux, arguments clés, hypothèses sous-jacentes), 2️⃣ Contexte 🌐 (historique, concepts liés, implications générales), 3️⃣ Évaluation Critique 💭 (forces et limites, perspectives alternatives, biais potentiels), 4️⃣ Applications 🎯 (utilisations pratiques, implications futures, questions ouvertes), 5️⃣ Points de Discussion 💡 (débats principaux, pistes de recherche, questions stimulantes) - Analyse ce contenu:"
 }
