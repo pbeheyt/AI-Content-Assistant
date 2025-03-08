@@ -21,11 +21,17 @@
 
     .container {
       background-color: #3c3c3c;
-      padding: 15px;
+      padding: 20px;
       border-radius: 8px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       text-align: center;
-      width: 200px;
+      width: 280px;
+    }
+
+    .title {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: #FF1694;
     }
 
     .toggle-container {
@@ -74,7 +80,7 @@
     }
 
     input:checked + .slider {
-      background-color: #9C27B0;
+      background-color: #FF1694;
     }
 
     input:checked + .slider:before {
@@ -93,7 +99,7 @@
     }
 
     button {
-      background: #ff4500;
+      background: #FF1694;
       color: #ffffff;
       padding: 12px 10px;
       font-size: 14px;
@@ -106,14 +112,22 @@
     }
 
     button:hover {
-      background: #e03d00;
+      background: #D80F7D;
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .status-message {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #ccc;
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <h1 class="title">AI Content Assistant</h1>
+    
     <div class="toggle-container">
       <span class="label" style="opacity: 0.7;">GPT</span>
       <label class="toggle-switch">
@@ -122,10 +136,13 @@
       </label>
       <span class="label" style="font-weight: bold;">Claude</span>
     </div>
+    
     <div class="button-container">
       <button type="button" id="summarizeBtn">Summarize</button>
       <button type="button" id="exploreBtn">Explore</button>
     </div>
+    
+    <div id="statusMessage" class="status-message"></div>
   </div>
   <script src="popup.js"></script>
 </body>
